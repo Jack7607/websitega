@@ -1,154 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>School Games Hub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    :root {
-      --bg: #0f1115;
-      --panel: #151822;
-      --card: #1c2030;
-      --accent: #4f8cff;
-      --text: #e6e9f0;
-      --muted: #9aa0b5;
-    }
-
-    * {
-      box-sizing: border-box;
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
     body {
       margin: 0;
-      background: var(--bg);
-      color: var(--text);
+      font-family: Arial, sans-serif;
+      background: #0f0f0f;
+      color: white;
     }
 
     header {
-      background: var(--panel);
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #22263a;
+      background: #111;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 2px solid #222;
     }
 
     header h1 {
       margin: 0;
-      font-size: 22px;
-      color: var(--accent);
+      font-size: 32px;
+      color: #00ffcc;
     }
 
-    .search {
-      background: #0c0f18;
-      border: 1px solid #2b2f45;
-      padding: 8px 12px;
-      color: var(--text);
-      border-radius: 6px;
-      width: 220px;
+    .container {
+      padding: 20px;
     }
 
-    main {
-      padding: 24px;
+    h2 {
+      margin-top: 40px;
+      color: #00ffcc;
     }
 
-    .section-title {
-      margin: 20px 0 10px;
-      color: var(--accent);
-    }
-
-    .games {
+    .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 20px;
+      gap: 15px;
+      margin-top: 15px;
     }
 
-    .game-card {
-      background: var(--card);
-      border-radius: 12px;
-      padding: 12px;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      cursor: pointer;
-    }
-
-    .game-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-    }
-
-    .thumb {
-      background: #000;
-      height: 120px;
+    .card {
+      background: #1a1a1a;
+      padding: 15px;
       border-radius: 8px;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--muted);
-      font-size: 13px;
       text-align: center;
-      padding: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+      border: 1px solid #222;
     }
 
-    .game-card h3 {
-      margin: 0;
-      font-size: 15px;
-      text-align: center;
+    .card:hover {
+      background: #222;
+      transform: scale(1.05);
     }
 
-    footer {
-      text-align: center;
-      padding: 20px;
-      color: var(--muted);
-      font-size: 13px;
+    .card span {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
     }
 
-    /* Modal */
+    /* MODAL */
     .modal {
+      display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.7);
-      display: none;
+      background: rgba(0,0,0,0.8);
+      z-index: 999;
       align-items: center;
       justify-content: center;
-      z-index: 999;
     }
 
     .modal-content {
-      background: var(--panel);
       width: 90%;
-      max-width: 1000px;
-      height: 80%;
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
+      height: 85%;
+      background: #000;
+      position: relative;
+      border-radius: 10px;
       overflow: hidden;
     }
 
-    .modal-header {
-      padding: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #10131f;
-    }
-
-    .modal-header button {
-      background: var(--accent);
-      border: none;
-      padding: 6px 10px;
-      border-radius: 6px;
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 28px;
       cursor: pointer;
-      color: #fff;
-      margin-left: 6px;
+      color: white;
+      z-index: 10;
     }
 
     iframe {
-      flex: 1;
+      width: 100%;
+      height: 100%;
       border: none;
-      background: #000;
     }
   </style>
 </head>
@@ -156,102 +104,49 @@
 
 <header>
   <h1>School Games Hub</h1>
-  <input class="search" placeholder="Search games..." oninput="searchGames(this.value)">
 </header>
 
-<main id="games"></main>
-
-<footer>
-  Student Web Project • Retro Games Embedded
-</footer>
+<div class="container">
+  <h2>🎮 RETRO</h2>
+  <div class="grid" id="games"></div>
+</div>
 
 <div class="modal" id="modal">
   <div class="modal-content">
-    <div class="modal-header">
-      <span id="gameTitle">Game</span>
-      <div>
-        <button onclick="fullscreen()">Fullscreen</button>
-        <button onclick="closeGame()">Close</button>
-      </div>
-    </div>
+    <div class="close" onclick="closeGame()">✖</div>
     <iframe id="gameFrame"></iframe>
   </div>
 </div>
 
 <script>
   const games = [
-    { name: "DOOM (1993)", url: "https://archive.org/embed/msdos_doom_1993", category: "RETRO" },
-    { name: "Wolfenstein 3D", url: "https://archive.org/embed/msdos_wolfenstein_3d", category: "RETRO" },
-    { name: "Prince of Persia", url: "https://archive.org/embed/msdos_prince_of_persia_1990", category: "RETRO" },
-    { name: "Oregon Trail", url: "https://archive.org/embed/msdos_oregon_trail_1990", category: "RETRO" },
-    { name: "Pac-Man", url: "https://archive.org/embed/arcade_pacman", category: "RETRO" },
-    { name: "Space Invaders", url: "https://archive.org/embed/arcade_spaceinvaders", category: "RETRO" }
+    { name: "DOOM (1993)", url: "https://archive.org/embed/msdos_doom_1993" },
+    { name: "Wolfenstein 3D", url: "https://archive.org/embed/msdos_wolf3d" },
+    { name: "Prince of Persia", url: "https://archive.org/embed/msdos_prince_of_persia_1990" },
+    { name: "Oregon Trail", url: "https://archive.org/embed/oregon-trail-deluxe" },
+    { name: "Pac-Man", url: "https://archive.org/embed/pacman" },
+    { name: "Space Invaders", url: "https://archive.org/embed/spaceinvaders" }
   ];
 
-  const gamesContainer = document.getElementById('games');
-  const modal = document.getElementById('modal');
-  const frame = document.getElementById('gameFrame');
+  const container = document.getElementById("games");
 
-  function loadGames() {
-    const sections = {};
-    games.forEach(game => {
-      if (!sections[game.category]) sections[game.category] = [];
-      sections[game.category].push(game);
-    });
+  games.forEach(game => {
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `<span>${game.name}</span>`;
+    div.onclick = () => openGame(game.url);
+    container.appendChild(div);
+  });
 
-    for (const category in sections) {
-      const title = document.createElement('h2');
-      title.className = 'section-title';
-      title.textContent = category;
-      gamesContainer.appendChild(title);
-
-      const grid = document.createElement('div');
-      grid.className = 'games';
-
-      sections[category].forEach(game => {
-        const card = document.createElement('div');
-        card.className = 'game-card';
-        card.onclick = () => openGame(game.url, game.name);
-
-        const thumb = document.createElement('div');
-        thumb.className = 'thumb';
-        thumb.textContent = game.name;
-
-        const h3 = document.createElement('h3');
-        h3.textContent = game.name;
-
-        card.appendChild(thumb);
-        card.appendChild(h3);
-        grid.appendChild(card);
-      });
-
-      gamesContainer.appendChild(grid);
-    }
-  }
-
-  function openGame(url, title) {
-    frame.src = url;
-    document.getElementById('gameTitle').textContent = title;
-    modal.style.display = 'flex';
+  function openGame(url) {
+    document.getElementById("gameFrame").src = url;
+    document.getElementById("modal").style.display = "flex";
   }
 
   function closeGame() {
-    frame.src = '';
-    modal.style.display = 'none';
+    document.getElementById("gameFrame").src = "";
+    document.getElementById("modal").style.display = "none";
   }
-
-  function fullscreen() {
-    frame.requestFullscreen();
-  }
-
-  function searchGames(query) {
-    query = query.toLowerCase();
-    document.querySelectorAll('.game-card').forEach(card => {
-      card.style.display = card.innerText.toLowerCase().includes(query) ? 'block' : 'none';
-    });
-  }
-
-  loadGames();
 </script>
 
 </body>
