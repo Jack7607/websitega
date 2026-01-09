@@ -54,6 +54,11 @@
       padding: 24px;
     }
 
+    .section-title {
+      margin: 20px 0 10px;
+      color: var(--accent);
+    }
+
     .games {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -82,7 +87,9 @@
       align-items: center;
       justify-content: center;
       color: var(--muted);
-      font-size: 14px;
+      font-size: 13px;
+      text-align: center;
+      padding: 6px;
     }
 
     .game-card h3 {
@@ -112,7 +119,7 @@
     .modal-content {
       background: var(--panel);
       width: 90%;
-      max-width: 900px;
+      max-width: 1000px;
       height: 80%;
       border-radius: 12px;
       display: flex;
@@ -135,6 +142,7 @@
       border-radius: 6px;
       cursor: pointer;
       color: #fff;
+      margin-left: 6px;
     }
 
     iframe {
@@ -151,12 +159,10 @@
   <input class="search" placeholder="Search games..." oninput="searchGames(this.value)">
 </header>
 
-<main>
-  <div class="games" id="games"></div>
-</main>
+<main id="games"></main>
 
 <footer>
-  Student Web Project • Built with HTML/CSS/JS
+  Student Web Project • Retro Games Embedded
 </footer>
 
 <div class="modal" id="modal">
@@ -174,7 +180,6 @@
 
 <script>
   const games = [
-    // 🎮 RETRO (Internet Archive embeds)
     { name: "DOOM (1993)", url: "https://archive.org/embed/msdos_doom_1993", category: "RETRO" },
     { name: "Wolfenstein 3D", url: "https://archive.org/embed/msdos_wolfenstein_3d", category: "RETRO" },
     { name: "Prince of Persia", url: "https://archive.org/embed/msdos_prince_of_persia_1990", category: "RETRO" },
@@ -188,20 +193,17 @@
   const frame = document.getElementById('gameFrame');
 
   function loadGames() {
-    gamesContainer.innerHTML = '';
     const sections = {};
-
     games.forEach(game => {
       if (!sections[game.category]) sections[game.category] = [];
       sections[game.category].push(game);
     });
 
     for (const category in sections) {
-      const h2 = document.createElement('h2');
-      h2.textContent = category;
-      h2.style.color = 'var(--accent)';
-      h2.style.margin = '20px 0 10px';
-      gamesContainer.appendChild(h2);
+      const title = document.createElement('h2');
+      title.className = 'section-title';
+      title.textContent = category;
+      gamesContainer.appendChild(title);
 
       const grid = document.createElement('div');
       grid.className = 'games';
@@ -215,11 +217,11 @@
         thumb.className = 'thumb';
         thumb.textContent = game.name;
 
-        const title = document.createElement('h3');
-        title.textContent = game.name;
+        const h3 = document.createElement('h3');
+        h3.textContent = game.name;
 
         card.appendChild(thumb);
-        card.appendChild(title);
+        card.appendChild(h3);
         grid.appendChild(card);
       });
 
